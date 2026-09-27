@@ -1,0 +1,83 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ChatType {
+  GROUP
+  COMMUNITY
+  DIRECT
+}
+
+enum FeedbackRating {
+  UP
+  DOWN
+}
+
+model Chat {
+  id                String    @id @default(cuid())
+  title             String
+  description       String?
+  type              ChatType
+  participantCount  Int
+  isHighActivity    Boolean   @default(true)
+  unreadCount       Int       @default(0)
+  lastSeenAt        DateTime?
+  simulatedOnDevice Boolean   @default(true)
+  summaryOptOut     Boolean   @default(false)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  messages          Message[]
+  summaries         Summary[]
+  }
+
+model Message {
+  id        String   @id @default(cuid())
+  chatId    String
+  sender    String
+  content   String
+  sentAt    DateTime
+  createdAt DateTime @default(now())
+  chat      Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
+
+  @@index([chatId, sentAt])
+}
+
+model Summary {
+  id                    String     @id @default(cuid())
+  chatId                String
+  coverageLabel         String
+  requestMode           String
+  requestedAt           DateTime   @default(now())
+  summaryText           String
+  keyUpdates            Json
+  decisions             Json
+  actionItems           Json
+  importantContributors Json
+  sourceMessageCount    Int
+  unreadMessageCount    Int
+  estimatedTimeSavedMin Int
+  latencyMs             Int
+  simulatedOnDevice     Boolean    @default(true)
+  triggeredBy           String     @default("Demo user")
+  chat                  Chat       @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  feedback              Feedback[]
+
+  @@index([chatId, requestedAt])
+}
+
+model Feedback {
+  id                 String         @id @default(cuid())
+  summaryId          String
+  rating             FeedbackRating
+  isPrivacyComplaint Boolean        @default(false)
+  note               String?
+  createdAt          DateTime       @default(now())
+  summary            Summary        @relation(fields: [summaryId], references: [id], onDelete: Cascade)
+
+  @@index([summaryId, createdAt])
+}

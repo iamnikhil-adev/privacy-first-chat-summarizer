@@ -73,40 +73,63 @@ Prisma models:
 
 Additional fields support demo metrics such as chat opt-out state, latency, simulated on-device labeling, and privacy complaint flags.
 
-## Setup
+# Local Setup
 
-1. Copy `.env.example` to `.env`.
-2. Point `DATABASE_URL` to a PostgreSQL database.
-3. Add `OPENAI_API_KEY` if you want live OpenAI summaries instead of demo fallback summarization.
-4. Install dependencies:
+## Prerequisites
 
-```bash
+- Node.js 20+
+- npm
+- Git
+- A PostgreSQL database
+  - Recommended: Neon
+- OpenAI API key (optional)
+
+## 1. Clone the repository
+
+git clone ...
+cd privacy-first-chat-summarizer
+
+## 2. Install dependencies
+
 npm install
-```
 
-5. Generate the Prisma client:
+## 3. Create your environment file
 
-```bash
+Copy `.env.example` to `.env`.
+
+Configure:
+
+DATABASE_URL="your PostgreSQL connection string"
+OPENAI_API_KEY="optional"
+OPENAI_MODEL="gpt-4.1-mini"
+
+## 4. Configure PostgreSQL
+
+Recommended: create a free Neon PostgreSQL project.
+
+Neon Console → Connect → PostgreSQL → copy connection string.
+
+Paste it into DATABASE_URL.
+
+## 5. Generate Prisma Client
+
 npm run prisma:generate
-```
 
-6. Run migrations:
+## 6. Create database tables
 
-```bash
 npm run prisma:migrate -- --name init
-```
 
-7. Seed demo data:
+## 7. Seed demo data
 
-```bash
 npm run seed
-```
 
-8. Start the app:
+## 8. Start development server
 
-```bash
 npm run dev
-```
+
+Open:
+
+http://localhost:3000
 
 ## Notes
 
